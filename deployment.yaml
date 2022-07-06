@@ -1,0 +1,62 @@
+---
+apiVersion: apps/v1
+kind: Deployment
+metadata:
+  name: netbox-exporter
+  namespace: netbox-community
+  labels:
+    app.kubernetes.io/name: netbox-exporter
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: netbox-exporter
+  replicas: 1
+  template:
+    metadata:
+      labels:
+        app.kubernetes.io/name: netbox-exporter
+    spec:
+      containers:
+      - name: netbox-exporter
+        image: python:latest
+        imagePullPolicy: Always
+        env:
+          - name: NETBOX_API
+            value: "http://netbox.netbox-community.svc"
+          - name: NETBOX_API_TOKEN
+            valueFrom:
+                secretKeyRef:
+                  name: netbox-secret
+                  key: superuser_api_token
+        ports:
+        - containerPort: 8000
+          name: metrics
+---
+apiVersion: v1
+kind: Service
+metadata:
+  name: netbox-exporter
+  labels:
+    app.kubernetes.io/name: netbox-exporter
+spec:
+  ports:
+  - port: 8000
+    targetPort: 8000
+    name: metrics
+  selector:
+    app.kubernetes.io/name: netbox-exporter
+---
+apiVersion: monitoring.coreos.com/v1
+kind: ServiceMonitor
+metadata:
+  name: netbox-exporter
+  namespace: netbox-community
+  labels:
+    app: netbox-exporter
+    release: kube-prometheus-stack
+spec:
+  selector:
+    matchLabels:
+      app.kubernetes.io/name: netbox-exporter
+  endpoints:
+  - port: metrics
