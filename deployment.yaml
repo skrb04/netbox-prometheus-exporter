@@ -17,7 +17,7 @@ spec:
         app.kubernetes.io/name: netbox-exporter
     spec:
       containers:
-      - name: netbox-exporter
+      - name: # your container from Dockerfile
         image: python:latest
         imagePullPolicy: Always
         env:
