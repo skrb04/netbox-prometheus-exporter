@@ -1,5 +1,7 @@
 # netbox-prometheus-exporter
-Simple prometheus exporter to generate graphs/metrics from netbox data
+Netbox prometheus exporter to generate graphs/metrics from netbox data
+
+Our security team was exporting this data into a spreadsheet on a regular basis, this exporter allows us to generate Grafana graphs.
 
 Sample deployment for k8s included with Service and ServiceMonitor
 
